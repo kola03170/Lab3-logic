@@ -28,7 +28,9 @@ struct node* get_struct(void)
     printf("Введите название объекта: ");
     scanf_s("%255s", p->inf, (unsigned)_countof(p->inf));
 
-    do
+    p->priority = 0;
+
+    while (p->priority <= 0)
     {
         printf("Введите приоритет (целое число > 0): ");
         scanf_s("%d", &p->priority);
@@ -37,8 +39,7 @@ struct node* get_struct(void)
         {
             printf("Ошибка: приоритет не может быть отрицательным или равным нулю. Повторите ввод.\n");
         }
-
-    } while (p->priority <= 0);
+    }
 
     p->next = NULL;
 
@@ -55,7 +56,6 @@ void add_priority(void)
         head = p;
         return;
     }
-
 
     if (p->priority < head->priority)
     {
@@ -120,9 +120,9 @@ int main(void)
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    int choice;
+    int choice = -1;
 
-    do
+    while (choice != 0)
     {
         printf("\n--- МЕНЮ ---\n");
         printf("1 - Добавить элемент\n");
@@ -153,8 +153,7 @@ int main(void)
         default:
             printf("Неверный выбор\n");
         }
-
-    } while (choice != 0);
+    }
 
     return 0;
 }
