@@ -28,8 +28,17 @@ struct node* get_struct(void)
     printf("Введите название объекта: ");
     scanf_s("%255s", p->inf, (unsigned)_countof(p->inf));
 
-    printf("Введите приоритет: ");
-    scanf_s("%d", &p->priority);
+    do
+    {
+        printf("Введите приоритет (целое число > 0): ");
+        scanf_s("%d", &p->priority);
+
+        if (p->priority <= 0)
+        {
+            printf("Ошибка: приоритет не может быть отрицательным или равным нулю. Повторите ввод.\n");
+        }
+
+    } while (p->priority <= 0);
 
     p->next = NULL;
 
@@ -108,8 +117,8 @@ void delete_first(void)
 
 int main(void)
 {
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     int choice;
 
