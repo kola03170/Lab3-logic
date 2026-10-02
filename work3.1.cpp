@@ -13,6 +13,22 @@ struct node
 
 struct node* head = NULL;
 
+int name_exists(const char* name)
+{
+    struct node* cur = head;
+
+    while (cur != NULL)
+    {
+        if (strcmp(cur->inf, name) == 0)
+        {
+            return 1;
+        }
+        cur = cur->next;
+    }
+
+    return 0;
+}
+
 struct node* get_struct(void)
 {
     struct node* p;
@@ -25,8 +41,22 @@ struct node* get_struct(void)
         exit(1);
     }
 
-    printf("Введите название объекта: ");
-    scanf_s("%255s", p->inf, (unsigned)_countof(p->inf));
+    int ok = 0;
+
+    while (!ok)
+    {
+        printf("Введите название объекта: ");
+        scanf_s("%255s", p->inf, (unsigned)_countof(p->inf));
+
+        if (name_exists(p->inf))
+        {
+            printf("Ошибка: объект с таким именем уже существует. Введите другое имя.\n");
+        }
+        else
+        {
+            ok = 1;
+        }
+    }
 
     p->priority = 0;
 
@@ -46,9 +76,8 @@ struct node* get_struct(void)
     return p;
 }
 
-void add_priority(void)
+void insert_sorted(struct node* p)
 {
-    struct node* p = get_struct();
     struct node* cur;
 
     if (head == NULL)
@@ -74,6 +103,13 @@ void add_priority(void)
 
     p->next = cur->next;
     cur->next = p;
+}
+
+void add_priority(void)
+{
+    struct node* p = get_struct();
+
+    insert_sorted(p);
 }
 
 void review(void)
@@ -115,6 +151,81 @@ void delete_first(void)
     free(temp);
 }
 
+void change_priority(void)
+{
+    char name[256];
+    struct node* cur = head;
+    struct node* target = NULL;
+    int new_priority = 0;
+
+    if (head == NULL)
+    {
+        printf("Список пуст\n");
+        return;
+    }
+
+    printf("Введите имя объекта, у которого нужно изменить приоритет: ");
+    scanf_s("%255s", name, (unsigned)_countof(name));
+
+    while (cur != NULL)
+    {
+        if (strcmp(cur->inf, name) == 0)
+        {
+            target = cur;
+            break;
+        }
+        cur = cur->next;
+    }
+
+    if (target == NULL)
+    {
+        printf("Объект с именем \"%s\" не найден.\n", name);
+        return;
+    }
+
+    printf("Текущий приоритет объекта \"%s\": %d\n",
+        target->inf, target->priority);
+
+    while (new_priority <= 0)
+    {
+        printf("Введите новый приоритет (целое число > 0): ");
+        scanf_s("%d", &new_priority);
+
+        if (new_priority <= 0)
+        {
+            printf("Ошибка: приоритет не может быть отрицательным или равным нулю. Повторите ввод.\n");
+        }
+    }
+
+    if (new_priority == target->priority)
+    {
+        printf("Приоритет не изменился.\n");
+        return;
+    }
+
+    if (target == head)
+    {
+        head = target->next;
+    }
+    else
+    {
+        cur = head;
+        while (cur->next != target)
+        {
+            cur = cur->next;
+        }
+        cur->next = target->next;
+    }
+
+    target->priority = new_priority;
+    target->next = NULL;
+
+    insert_sorted(target);
+
+    printf("Приоритет объекта \"%s\" успешно изменён на %d.\n",
+        target->inf, target->priority);
+}
+
 int main(void)
 {
     SetConsoleCP(1251);
@@ -128,6 +239,7 @@ int main(void)
         printf("1 - Добавить элемент\n");
         printf("2 - Просмотреть очередь\n");
         printf("3 - Удалить первый элемент\n");
+        printf("4 - Изменить приоритет по имени\n");
         printf("0 - Выход\n");
         printf("Ваш выбор: ");
         scanf("%d", &choice);
@@ -144,6 +256,10 @@ int main(void)
 
         case 3:
             delete_first();
+            break;
+
+        case 4:
+            change_priority();
             break;
 
         case 0:
