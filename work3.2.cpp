@@ -92,10 +92,63 @@ void delete_first(void)
     free(temp);
 }
 
+void move_after_n_to_front(void)
+{
+    int n, i;
+    struct node* cur = head;
+    struct node* prev = NULL;
+    struct node* new_head = NULL;
+    struct node* new_tail = NULL;
+
+    if (head == NULL)
+    {
+        printf("Очередь пуста\n");
+        return;
+    }
+
+    printf("Введите номер элемента n (начиная с 1): ");
+    scanf("%d", &n);
+
+    if (n < 1)
+    {
+        printf("Некорректный номер\n");
+        return;
+    }
+
+    for (i = 1; cur != NULL && i < n; i++)
+    {
+        prev = cur;
+        cur = cur->next;
+    }
+
+    if (cur == NULL)
+    {
+        printf("В очереди меньше %d элементов\n", n);
+        return;
+    }
+
+    if (cur->next == NULL)
+    {
+        printf("После %d-го элемента нет элементов для перемещения\n", n);
+        return;
+    }
+
+    new_head = cur->next;
+    new_tail = tail;
+
+    cur->next = NULL;
+    tail = cur;
+
+    new_tail->next = head;
+    head = new_head;
+
+    printf("Элементы после %d-го номера перемещены в начало очереди\n", n);
+}
+
 int main(void)
 {
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     int choice;
 
@@ -105,6 +158,7 @@ int main(void)
         printf("1 - Добавить элемент\n");
         printf("2 - Просмотреть очередь\n");
         printf("3 - Удалить первый элемент\n");
+        printf("4 - Переместить элементы после n-го в начало\n");
         printf("0 - Выход\n");
         printf("Ваш выбор: ");
 
@@ -122,6 +176,10 @@ int main(void)
 
         case 3:
             delete_first();
+            break;
+
+        case 4:
+            move_after_n_to_front();
             break;
 
         case 0:
